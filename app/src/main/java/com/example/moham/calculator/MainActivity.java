@@ -12,10 +12,6 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final char ADD = '+';
-    private static final char SUB = '-';
-    private static final char MULTI = '*';
-    private static final char DIV = '/';
     private EditText editText;
     private TextView tvAnswer;
     operation mOperation;
