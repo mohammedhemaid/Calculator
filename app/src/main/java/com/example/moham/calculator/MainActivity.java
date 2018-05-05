@@ -1,22 +1,13 @@
 package com.example.moham.calculator;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.Selection;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import org.mariuszgromada.math.mxparser.Expression;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -27,15 +18,16 @@ public class MainActivity extends AppCompatActivity {
     private static final char DIV = '/';
     private EditText editText;
     private TextView tvAnswer;
-    private char currentAction;
+    operation mOperation;
+
     Button b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, bDot, bEqual, bDelete, bAdd, bSub, bDiv, bMulti;
-    ArrayList<Double> arrayList;
-    DecimalFormat df;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         b0 = findViewById(R.id.button0);
         b1 = findViewById(R.id.button1);
         b2 = findViewById(R.id.button2);
@@ -56,10 +48,7 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.editText);
         editText.setCursorVisible(true);
         tvAnswer = findViewById(R.id.tv_answer);
-        arrayList = new ArrayList();
-
-        df = new DecimalFormat("0.########");
-        View view = this.getCurrentFocus();
+        mOperation = new operation(editText, tvAnswer);
 
         b0.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,14 +137,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        bDot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insert("0.");
+            }
+        });
 
         bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int length = editText.getText().length();
-                if (length > 0) {
-                    editText.getText().delete(length - 1, length);
-                }
+                mOperation.delete();
             }
         });
         bDelete.setOnLongClickListener(new View.OnLongClickListener() {
@@ -163,29 +155,20 @@ public class MainActivity extends AppCompatActivity {
             public boolean onLongClick(View view) {
                 editText.setText("");
                 tvAnswer.setText("");
-                arrayList.clear();
                 return true;
             }
         });
         bMulti.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(editText.getText())) {
-                    editText.setText(editText.getText() + "×");
-                } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-                    editText.setText(tvAnswer.getText() + "×");
-                }
+                mOperation.multi();
             }
         });
 
         bSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(editText.getText())) {
-                    editText.setText(editText.getText() + "-");
-                } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-                    editText.setText(tvAnswer.getText() + "-");
-                }
+                mOperation.sub();
             }
         });
 
@@ -194,37 +177,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (!TextUtils.isEmpty(editText.getText())) {
-                    editText.setText(editText.getText() + "÷");
-                } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-                    editText.setText(tvAnswer.getText() + "÷");
-                }
+                mOperation.div();
             }
         });
 
         bAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(editText.getText())) {
-                    editText.setText(editText.getText() + "+");
-                } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-                    editText.setText(tvAnswer.getText() + "+");
-                }
+                mOperation.add();
             }
         });
-        bDot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insert("0.");
-            }
-        });
+
 
         bEqual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 try {
-                    equaleMethod();
+                    mOperation.equaleMethod();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -249,19 +219,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    void equaleMethod() {
-        editText.getText().toString();
-        Log.d("editText", editText.getText() + "");
-        String ex = editText.getText().toString();
-        String exp = ex.replaceAll("×", "*").replaceAll("÷", "/");
 
-        Expression e = new Expression(exp);
-
-        Double answer = e.calculate();
-        String S = df.format(answer);
-        tvAnswer.setText(S);
-        editText.setText(null);
-
-    }
 }
 
