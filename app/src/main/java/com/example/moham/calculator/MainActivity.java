@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.Selection;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                insert("0");
+                mOperation.insert("0");
 
 
             }
@@ -58,21 +59,21 @@ public class MainActivity extends AppCompatActivity {
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("1");
+                mOperation.insert("1");
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                insert("2");
+                mOperation.insert("2");
             }
         });
 
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("3");
+                mOperation.insert("3");
 
 
             }
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                insert("4");
+                mOperation.insert("4");
 
 
             }
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                insert("5");
+                mOperation.insert("5");
 
 
             }
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         b6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("6");
+                mOperation.insert("6");
 
 
             }
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         b7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("7");
+                mOperation.insert("7");
 
 
             }
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         b8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("8");
+                mOperation.insert("8");
 
 
             }
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         b9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("9");
+                mOperation.insert("9");
 
 
             }
@@ -136,7 +137,24 @@ public class MainActivity extends AppCompatActivity {
         bDot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert("0.");
+//                if (!TextUtils.isEmpty(editText.getText())) {
+//                    String ex = editText.getText().toString();
+//                    char x = ex.charAt(ex.length() - 1);
+//                    if (x == '÷' || x == '+' || x == '-' || x == '×') {
+//                        mOperation.insert("0.");
+//                    } else {
+//                        mOperation.insert(".");
+//                    }
+//                }else {
+//                    mOperation.insert("0.");
+//                }
+                if (mOperation.lastExp()) {
+                    return;
+                } else if (!TextUtils.isEmpty(editText.getText())) {
+                    mOperation.insert(".");
+                }else if (TextUtils.isEmpty(editText.getText())){
+                    mOperation.insert("0.");
+                }
             }
         });
 
@@ -199,22 +217,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-
-    public void insert(String n) {
-
-
-        editText.setText(editText.getText() + n);
-        String ex = editText.getText().toString();
-        char x = ex.charAt(ex.length() - 1);
-        if (x == '.' || x == '÷' || x == '+' || x == '-' || x == '×') {
-            return;
-        }
-        Editable editable = editText.getText();
-        Selection.setSelection(editable, editText.getText().toString().length());
-    }
-
-
 
 }
 

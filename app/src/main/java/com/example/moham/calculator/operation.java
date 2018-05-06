@@ -1,5 +1,7 @@
 package com.example.moham.calculator;
 
+import android.text.Editable;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
@@ -15,10 +17,10 @@ import java.text.DecimalFormat;
 
 public class operation {
 
-    private static final char ADD = '+';
-    private static final char SUB = '-';
-    private static final char MULTI = '*';
-    private static final char DIV = '÷';
+    private static final String ADD = "+";
+    private static final String SUB = "-";
+    private static final String MULTI = "×";
+    private static final String DIV = "÷";
 
     private EditText editText;
     private TextView tvAnswer;
@@ -30,37 +32,56 @@ public class operation {
     }
 
     void add() {
-        if (!TextUtils.isEmpty(editText.getText())) {
-            editText.setText(editText.getText().toString() + ADD);
-        } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-            editText.setText(tvAnswer.getText().toString() + ADD);
+
+        if (lastExp()) {
+            return;
+        } else {
+            if (!TextUtils.isEmpty(editText.getText())) {
+                insert(ADD);
+            } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
+                insert(tvAnswer.getText().toString() + ADD);
+            }
+            select();
         }
     }
 
     void sub() {
-        if (!TextUtils.isEmpty(editText.getText())) {
-            editText.setText(editText.getText().toString() + SUB);
-        } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-            editText.setText(tvAnswer.getText().toString() + SUB);
+        if (lastExp()) {
+            return;
+        } else {
+            if (!TextUtils.isEmpty(editText.getText())) {
+                insert(SUB);
+            } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
+                insert(tvAnswer.getText().toString() + SUB);
+            }
+            select();
         }
     }
 
     void multi() {
-
-        if (!TextUtils.isEmpty(editText.getText())) {
-            editText.setText(editText.getText().toString() + MULTI);
-        } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-            editText.setText(tvAnswer.getText().toString() + MULTI);
+        if (lastExp()) {
+            return;
+        } else {
+            if (!TextUtils.isEmpty(editText.getText())) {
+                insert(MULTI);
+            } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
+                insert(tvAnswer.getText().toString() + MULTI);
+            }
+            select();
         }
     }
 
     void div() {
-        if (!TextUtils.isEmpty(editText.getText())) {
-            editText.setText(editText.getText().toString() + DIV);
-        } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
-            editText.setText(tvAnswer.getText().toString() + DIV);
+        if (lastExp()) {
+            return;
+        } else {
+            if (!TextUtils.isEmpty(editText.getText())) {
+                insert(DIV);
+            } else if (TextUtils.isEmpty(editText.getText()) && tvAnswer != null) {
+                insert(tvAnswer.getText().toString() + DIV);
+            }
+            select();
         }
-
     }
 
     void delete() {
@@ -71,18 +92,46 @@ public class operation {
     }
 
     void equaleMethod() {
-        editText.getText().toString();
-        Log.d("editText", editText.getText() + "");
-        String ex = editText.getText().toString();
-        String exp = ex.replaceAll("×", "*").replaceAll("÷", "/");
+        if (lastExp()) {
+            return;
+        } else if (!TextUtils.isEmpty(editText.getText())){
+            String ex = editText.getText().toString();
+            String exp = ex.replaceAll("×", "*").replaceAll("÷", "/");
 
-        Expression e = new Expression(exp);
+            Expression e = new Expression(exp);
 
-        Double answer = e.calculate();
-        String S = df.format(answer);
-        tvAnswer.setText(S);
-        editText.setText(null);
-
+            Double answer = e.calculate();
+            String S = df.format(answer);
+            tvAnswer.setText(S);
+            editText.setText(null);
+            select();
+        }
     }
 
+    public void insert(String n) {
+        editText.setText(editText.getText() + n);
+        select();
+    }
+
+
+    void select() {
+        Editable editable = editText.getText();
+        Selection.setSelection(editable, editText.getText().toString().length());
+    }
+
+    boolean lastExp() {
+        boolean flag = false;
+        if (!TextUtils.isEmpty(editText.getText())) {
+            String ex = editText.getText().toString();
+            char x = ex.charAt(ex.length() - 1);
+            if (x == '.' || x == '÷' || x == '+' || x == '-' || x == '×') {
+
+                flag = true;
+            }
+
+        } else if (TextUtils.isEmpty(editText.getText())&&TextUtils.isEmpty(tvAnswer.getText())) {
+            flag = true;
+        }
+        return flag;
+    }
 }
